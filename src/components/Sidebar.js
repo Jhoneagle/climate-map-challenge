@@ -88,11 +88,7 @@ function Sidebar(props) {
 	      
 	      <Snow currentDepth={currentDepth} />
 	      
-	      <Rain raining={raining} />
-	      
-	      <p>
-	        Total amount of rain today: {total} mm
-	      </p>
+	      <Rain raining={raining} total={total} />
 	    </div> : 
 	    <pre>
 	      Select location for weather informations!
@@ -123,15 +119,15 @@ function Temperature(props) {
       <h3> Temperature </h3>
       
       <p>
-        Current temperature is {props.temperatureNow} celsius.
+        Current temperature is {props.temperatureNow}&deg;C.
       </p>
     
       <p>
-        Todays highest is {props.temperatureHighest} celsius.
+        Todays highest is {props.temperatureHighest}&deg;C.
       </p>
     
       <p>
-        Todays lowest is {props.temperatureLowest} celsius.
+        Todays lowest is {props.temperatureLowest}&deg;C.
       </p>
     </div>
   );
@@ -141,7 +137,7 @@ function Snow(props) {
   return (
     <div>
       {props.currentDepth ? 
-	<p> Snowdepth is {props.currentDepth} cm. </p> :
+	<p> Snowdepth is {props.currentDepth}cm. </p> :
 	<p> There isn't any snow. </p>
       }
     </div>
@@ -152,14 +148,25 @@ function Rain(props) {
   return (
     <div>
       {props.raining ? 
-	<p> In past hour been raining {props.raining} mm. </p> :
+	<p> In past hour been raining {props.raining}mm. </p> :
 	<p> There hasn't been any rain in past hour. </p>
       }
+      
+      <p>
+	Total amount of rain today: {props.total}mm
+      </p>
     </div>
   );
 }
 
 export default styled(Sidebar)`
-    width: 300px;
+    overflowY: scroll;
+    top: 0px;
+    float: left;
     height: 100vh;
+    position: relative;
+    cursor: pointer;
+    zIndex: 10px;
+    opacity: 0px;
+    width: 300px;
 `;

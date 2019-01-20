@@ -53,7 +53,7 @@ export default function App() {
   return (
     <div className="App">
       <Sidebar selectedLocationId={selectedLocation} observationLocations={observationLocations}/>
-      <MapComponent setSelectedLocation={setSelectedLocation} observationLocations={observationLocations}/>
+      <MapComponent selectedLocationId={selectedLocation} setSelectedLocation={setSelectedLocation} observationLocations={observationLocations}/>
     </div>
   );
 }
