@@ -27,19 +27,36 @@ class Chart extends Component {
 
   // Parsing and saving data in proper format for use in chart
   parseData = () => {
-    let selectedData = this.props.observationLocations.filter(
+    let selectedData = this.props.observationLocations.find(
       t => t.info.id === this.props.selectedLocationId
     );
+    
     let xyData = [];
     let xyData2 = [];
     
-    for (let i = Math.floor(selectedData[0].data.r_1h.timeValuePairs.length / 2); i < selectedData[0].data.r_1h.timeValuePairs.length; i++) {
-        let e = selectedData[0].data.r_1h.timeValuePairs[i];
+    // rain
+    let rainArray;
+    if (selectedData.data.r_1h.timeValuePairs.length > 40) {
+      rainArray = selectedData.data.r_1h.timeValuePairs.splice(Math.floor(selectedData.data.r_1h.timeValuePairs.length / 2), selectedData.data.r_1h.timeValuePairs.length);
+    } else {
+      rainArray = selectedData.data.r_1h.timeValuePairs;
+    }
+    
+    for (let i = 0; i < rainArray.length; i++) {
+        let e = rainArray[i];
         xyData2.push({ x: e.time, y: e.value });
     }
     
-    for (let i = Math.floor(selectedData[0].data.t.timeValuePairs.length / 2); i < selectedData[0].data.t.timeValuePairs.length; i++) {
-      let e = selectedData[0].data.t.timeValuePairs[i];
+    // temperature
+    let tArray;
+    if (selectedData.data.t.timeValuePairs.length > 40) {
+      tArray = selectedData.data.t.timeValuePairs.splice(Math.floor(selectedData.data.t.timeValuePairs.length / 2), selectedData.data.t.timeValuePairs.length);
+    } else {
+      tArray = selectedData.data.t.timeValuePairs;
+    }
+    
+    for (let i = 0; i < tArray.length; i++) {
+      let e = tArray[i];
       xyData.push({ x: e.time, y: e.value });
     }
     

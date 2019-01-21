@@ -19,8 +19,13 @@ function Sidebar(props) {
     
     if (data) {
       /* Parsing temperature */
-      tArray = data.t.timeValuePairs.splice(Math.floor(data.t.timeValuePairs.length / 2), data.t.timeValuePairs.length);
-      temperatureNow = tArray[tArray.length] ? tArray[tArray.length].value : (tArray[tArray.length - 1] ? tArray[tArray.length - 1].value : undefined);
+      if (data.t.timeValuePairs.length > 48) {
+        tArray = data.t.timeValuePairs.splice(Math.floor(data.t.timeValuePairs.length / 2), data.t.timeValuePairs.length);
+      } else {
+        tArray = data.t.timeValuePairs;
+      }
+      
+      temperatureNow = tArray[tArray.length - 1] ? tArray[tArray.length - 1].value : (tArray[tArray.length - 2] ? tArray[tArray.length - 2].value : undefined);
       
       tArray.forEach(item => {
 	const value = item ? item.value : undefined;
@@ -32,12 +37,17 @@ function Sidebar(props) {
       });
       
       /* Parsing info about snowdepth */
-      snowArray = data.snowdepth.timeValuePairs.splice(Math.floor(data.snowdepth.timeValuePairs.length / 2), data.snowdepth.timeValuePairs.length);
-      currentSnowDepth = snowArray[snowArray.length] ? snowArray[snowArray.length].value : (snowArray[snowArray.length - 1] ? snowArray[snowArray.length - 1].value : undefined);
+      snowArray = data.snowdepth.timeValuePairs;
+      currentSnowDepth = snowArray[snowArray.length - 1] ? snowArray[snowArray.length - 1].value : (snowArray[snowArray.length - 2] ? snowArray[snowArray.length - 2].value : undefined);
     
       /* Parsing info about total rain each hour */
-      rainArray = data.r_1h.timeValuePairs.splice(Math.floor(data.r_1h.timeValuePairs.length / 2), data.r_1h.timeValuePairs.length);
-      raining = rainArray[rainArray.length] ? rainArray[rainArray.length].value : (rainArray[rainArray.length - 1] ? rainArray[rainArray.length - 1].value : undefined);
+      if (data.r_1h.timeValuePairs.length > 48) {
+        rainArray = data.r_1h.timeValuePairs.splice(Math.floor(data.r_1h.timeValuePairs.length / 2), data.r_1h.timeValuePairs.length);
+      } else {
+        rainArray = data.r_1h.timeValuePairs;
+      }
+      
+      raining = rainArray[rainArray.length - 1] ? rainArray[rainArray.length - 1].value : (rainArray[rainArray.length - 2] ? rainArray[rainArray.length - 2].value : undefined);
       
       rainArray.forEach(item => {
 	const value = item ? item.value : undefined;
