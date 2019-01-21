@@ -70,15 +70,15 @@ class Chart extends Component {
 	<div className="buttons">
 	  <button
             type="button"
-            className="btn btn-secondary m-3"
+            className="btn btn-primary"
             id="chart-button"
             onClick={this.props.resetSelectedLocation}
           >
-            Sulje
+            Close
           </button><br />
 	  <button
             type="button"
-            className="btn btn-secondary m-3"
+            className="btn btn-primary"
             id="chart-button"
             onClick={(e) => this.setState({ which: 1 })}
           >
@@ -86,7 +86,7 @@ class Chart extends Component {
           </button><br />
 	  <button
             type="button"
-            className="btn btn-secondary m-3"
+            className="btn btn-primary"
             id="chart-button"
             onClick={(e) => this.setState({ which: 2 })}
           >
