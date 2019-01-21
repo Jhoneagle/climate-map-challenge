@@ -4,6 +4,7 @@ import './css/App.css';
 import L from "leaflet";
 import Sidebar from './components/Sidebar';
 import MapComponent from './components/Map';
+import Chart from './components/Chart';
 
 // Ugly hack to fix Leaflet icons with leaflet loaders
 delete L.Icon.Default.prototype._getIconUrl;
@@ -16,7 +17,6 @@ L.Icon.Default.mergeOptions({
 
 export default function App() {
   const [observationLocations, setObservationLocations] = useState([]);
-
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   useEffect(function fetchObservationLocations() {
@@ -26,7 +26,7 @@ export default function App() {
         begin: Date.now() - 60e3 * 60 * 24 * 2,
         end: Date.now(),
         requestParameter: "t,snowdepth,r_1h",
-        timestep: 30 * 60 * 1000,
+        timestep: 60 * 60 * 1000,
         bbox: "20.6455928891, 59.846373196, 31.5160921567, 70.1641930203",
         callback: (data, errors) => {
           if (errors.length > 0) {
@@ -50,10 +50,32 @@ export default function App() {
     }
   }, []);
 
+  function handleSelectedLocation(id) {
+    setSelectedLocation(id);
+  }
+
+  function handleReset() {
+    setSelectedLocation(null);
+  }
+
   return (
     <div className="App">
-      <Sidebar selectedLocationId={selectedLocation} observationLocations={observationLocations}/>
-      <MapComponent selectedLocationId={selectedLocation} setSelectedLocation={setSelectedLocation} observationLocations={observationLocations}/>
+      <Sidebar 
+        selectedLocationId={selectedLocation} 
+	observationLocations={observationLocations}
+      />
+      
+      <MapComponent 
+        selectedLocationId={selectedLocation} 
+        setSelectedLocation={handleSelectedLocation}
+        observationLocations={observationLocations}
+      />
+      
+      <Chart 
+        selectedLocationId={selectedLocation} 
+        observationLocations={observationLocations} 
+        resetSelectedLocation={handleReset}
+      />
     </div>
   );
 }

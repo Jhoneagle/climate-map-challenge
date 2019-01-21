@@ -1,72 +1,54 @@
 import React from 'react';
 import styled from "styled-components";
-import getSelectedLocatoinId from '../utils/locationGetter';
 
 function Sidebar(props) {
-    const id = getSelectedLocatoinId(props.selectedLocationId);
+    const id = props.selectedLocationId;
     const loc = props.observationLocations.find(loc => loc.info.id === id);
     const info = loc ? loc.info : loc;
     const data = loc ? loc.data : loc;
     
-    /* Parsing info about temperature */
     let temperatureNow;
-    let previousHour;
     let temperatureHighest = -Number.MAX_VALUE;
     let temperatureLowest = Number.MAX_VALUE;
+    let currentSnowDepth;
+    let raining;
+    let total = 0; // rain in a day
+    let tArray;
+    let snowArray;
+    let rainArray;
     
-    data ? 
-      data.t.timeValuePairs.forEach(item => {
-	const date = new Date(item.time);
-	const current = new Date();
-	const value = date ? ((date.getDate() === current.getDate()) ? item.value : undefined) : undefined;
+    if (data) {
+      /* Parsing temperature */
+      tArray = data.t.timeValuePairs.splice(Math.floor(data.t.timeValuePairs.length / 2), data.t.timeValuePairs.length);
+      temperatureNow = tArray[tArray.length] ? tArray[tArray.length].value : (tArray[tArray.length - 1] ? tArray[tArray.length - 1].value : undefined);
+      
+      tArray.forEach(item => {
+	const value = item ? item.value : undefined;
 	
 	if (value) {
-	  temperatureNow = (date.getHours() === current.getHours() && !temperatureNow) ? value : temperatureNow;
-	  previousHour = (date.getHours() === (current.getHours() - 1) && !previousHour) ? value : previousHour;
 	  temperatureHighest = (temperatureHighest < value) ? value : temperatureHighest;
 	  temperatureLowest = (temperatureLowest > value) ? value : temperatureLowest;
 	}
-      }) : temperatureNow = undefined;
+      });
+      
+      /* Parsing info about snowdepth */
+      snowArray = data.snowdepth.timeValuePairs.splice(Math.floor(data.snowdepth.timeValuePairs.length / 2), data.snowdepth.timeValuePairs.length);
+      currentSnowDepth = snowArray[snowArray.length] ? snowArray[snowArray.length].value : (snowArray[snowArray.length - 1] ? snowArray[snowArray.length - 1].value : undefined);
     
-    temperatureNow = (!temperatureNow) ? previousHour : temperatureNow;
-    
-    /* Parsing info about snowdepth */
-    let currentDepth;
-    let depthEarlier;
-    
-    data ? 
-      data.snowdepth.timeValuePairs.forEach(item => {
-	const date = new Date(item.time);
-	const current = new Date();
-	const value = date ? ((date.getDate() === current.getDate()) ? item.value : undefined) : undefined;
+      /* Parsing info about total rain each hour */
+      rainArray = data.r_1h.timeValuePairs.splice(Math.floor(data.r_1h.timeValuePairs.length / 2), data.r_1h.timeValuePairs.length);
+      raining = rainArray[rainArray.length] ? rainArray[rainArray.length].value : (rainArray[rainArray.length - 1] ? rainArray[rainArray.length - 1].value : undefined);
+      
+      rainArray.forEach(item => {
+	const value = item ? item.value : undefined;
 	
 	if (value) {
-	  currentDepth = (date.getHours() === current.getHours() && !currentDepth) ? value : currentDepth;
-	  depthEarlier = (date.getHours() === (current.getHours() - 1) && !depthEarlier) ? value : depthEarlier;
-	}
-      }) : currentDepth = undefined;
-    
-    currentDepth = (!currentDepth) ? depthEarlier : currentDepth;
-    
-    /* Parsing info about total rain each hour */
-    let raining;
-    let eariler;
-    let total = 0;
-    
-    data ? 
-      data.r_1h.timeValuePairs.forEach(item => {
-	const date = new Date(item.time);
-	const current = new Date();
-	const value = date ? ((date.getDate() === current.getDate()) ? item.value : undefined) : undefined;
-	
-	if (value) {
-	  raining = (date.getHours() === current.getHours() && !raining) ? value : raining;
-	  eariler = (date.getHours() === (current.getHours() - 1) && !eariler) ? value : eariler;
 	  total += value;
+	} else {
+	  item = 0;
 	}
-      }) : raining = undefined;
-    
-    raining = (!raining) ? eariler : raining;
+      })
+    }
     
     /* render results */
     return (
@@ -86,12 +68,15 @@ function Sidebar(props) {
 	      
 	      <h3> Other information </h3>
 	      
-	      <Snow currentDepth={currentDepth} />
+	      <Snow currentSnowDepth={currentSnowDepth} />
 	      
 	      <Rain raining={raining} total={total} />
 	    </div> : 
 	    <pre>
-	      Select location for weather informations!
+	      <span className="inner-pre">
+                Select location for <br />
+		weather informations!
+              </span>
 	    </pre>
 	  }
 	</div>
@@ -123,11 +108,11 @@ function Temperature(props) {
       </p>
     
       <p>
-        Todays highest is {props.temperatureHighest}&deg;C.
+	Highest temperature in last 12hours is {props.temperatureHighest}&deg;C.
       </p>
     
       <p>
-        Todays lowest is {props.temperatureLowest}&deg;C.
+        Lowest temperature in last 12hours is {props.temperatureLowest}&deg;C.
       </p>
     </div>
   );
@@ -137,8 +122,8 @@ function Snow(props) {
   return (
     <div>
       {props.currentDepth ? 
-	<p> Snowdepth is {props.currentDepth}cm. </p> :
-	<p> There isn't any snow. </p>
+	<p> Snowdepth is {props.currentSnowDepth}cm. </p> :
+	<p> There isn't any snow outside. </p>
       }
     </div>
   );
@@ -153,13 +138,14 @@ function Rain(props) {
       }
       
       <p>
-	Total amount of rain today: {props.total}mm
+	Total amount of rain in last 12 hours: {props.total}mm
       </p>
     </div>
   );
 }
 
 export default styled(Sidebar)`
+    background-color: yellow;
     overflowY: scroll;
     top: 0px;
     float: left;

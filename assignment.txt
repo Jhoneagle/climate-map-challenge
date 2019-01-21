@@ -4,4 +4,4 @@ Then when the markers were in right places I started refactoring the project. Fi
 
 After doing refactoring I started working with sidebar and made it use weather information that was gotten from API. It now displays current and days highest and lowest temprature, if there is snow in the ground and what is its depth and amount of rain during last hour and day. Which are separated into their own small components to make sidebar component more readable. Also it's commented from begging where it parses the information from the json.
 
-Now there is also tooltip added to the markers to tell name of the marker.So that it's easier to select one you want as you don't have to guess. 
+Now there is also tooltip added to the markers to tell name of the marker. So that it's easier to select one you want as you don't have to guess. There has been also applied some styling for sidebar and chart which was added as last thing. With it you can see raining amounts or temperature during last 12hours.
